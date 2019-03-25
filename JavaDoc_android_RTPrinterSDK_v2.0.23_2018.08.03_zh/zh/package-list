@@ -1,0 +1,12 @@
+com.rt.printerlibrary.bean
+com.rt.printerlibrary.cmd
+com.rt.printerlibrary.connect
+com.rt.printerlibrary.enumerate
+com.rt.printerlibrary.exception
+com.rt.printerlibrary.factory.cmd
+com.rt.printerlibrary.factory.connect
+com.rt.printerlibrary.factory.printer
+com.rt.printerlibrary.observer
+com.rt.printerlibrary.printer
+com.rt.printerlibrary.setting
+com.rt.printerlibrary.utils
