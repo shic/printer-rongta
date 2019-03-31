@@ -151,6 +151,18 @@
 
 ```
 
+## 2 打印机断连以后如何重连（因为我们不知道在什么情况下会断连，所以想跟你讨论下重连的问题）
+
+```
+PrinterObserverManager.getInstance().add(new PrinterObserver() {
+                @Override
+                public void printerObserverCallback(final PrinterInterface printerInterface, final int state) {
+                    //打印机断连
+                }
+```
+
+在断连后肯定在这里会收到一个信号，收到后怎么进行重连呢？ 
+
 
 
 ## 3 这些调试中的打印每秒钟都打很多次，而且有时候有有时候没有。能不能问一下是什么时候才会出现？能不能去掉SDK中的调试中的打印 （很影响看log中的其他更重要的信息）
