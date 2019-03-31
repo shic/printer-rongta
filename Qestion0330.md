@@ -1,6 +1,39 @@
 # 180330问题：
 
-## 1 打印机连接重复
+## 1 有没有一个基本的打印的小票的模板？
+
+我们这样一点一点调出来的模板很难看，你们客户或者你们开发过程中有没有一个基本的小票的打印？ 这样我只要换一下内容就行。
+
+```
+
+
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getTextCmd(textSetting, dishName));
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getTextCmd(textSetting, dateTimeStr));
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getTextCmd(textSetting, tableNumber));
+
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            //escCmd.append(escCmd.getHeaderCmd());//初始化, Initial
+            escCmd.append(escCmd.getLFCRCmd());
+
+            escCmd.append(escCmd.getAllCutCmd());
+            
+```
+
+
+## 2 打印机连接重复
 
 在连接打印机之后，在 call back `public void printerObserverCallback(final PrinterInterface printerInterface, final int state)` 里会出现同一台打印机在同一时间两次返回callback的情况
 
@@ -120,3 +153,10 @@
 
 
 
+## 3 这些调试中的打印每秒钟都打很多次，而且有时候有有时候没有。能不能问一下是什么时候才会出现？能不能去掉SDK中的调试中的打印 （很影响看log中的其他更重要的信息）
+
+2019-03-28 20:09:21.316 15379-15821/com.ristoo I/System.out: waitting for instream
+2019-03-28 20:09:21.411 15379-15801/com.ristoo I/System.out: waitting for instream
+2019-03-28 20:09:21.412 15379-15809/com.ristoo I/System.out: waitting for instream
+2019-03-28 20:09:21.412 15379-15842/com.ristoo I/System.out: waitting for instream
+2019-03-28 20:09:21.412 15379-15833/com.ristoo I/System.out: waitting for instream
