@@ -1,36 +1,90 @@
 # 180330问题：
 
-## 1 有没有一个基本的打印的小票的模板？
+## 1 一个安卓设备只连一台打印机的时候没有任何问题，但是一旦连接多台打印机，有些时候会出现某台打印机断连的情况
 
-我们这样一点一点调出来的模板很难看，你们客户或者你们开发过程中有没有一个基本的小票的打印？ 这样我只要换一下内容就行。
+以下是连接代码，您能看一下吗？或者说您那边有没有一台安卓设备连多台打印机的情况？
+
+```java
+for (int i = 0; i < kitchenPrinterList.size(); i++) {
+
+            final KitchenPrinter kitchenPrinter = kitchenPrinterList.get(i);
+
+            final String ip = kitchenPrinter.ip;
+            final int port = kitchenPrinter.port;
+
+            // 初始化为针打printer
+            PrinterFactory printerFactory = new UniversalPrinterFactory();
+            final RTPrinter rtPrinter = printerFactory.create();
+
+            //添加连接状态监听
+            PrinterObserverManager.getInstance().add(new PrinterObserver() {
+                @Override
+                public void printerObserverCallback(final PrinterInterface printerInterface, final int state) {
+                    Log.d(LOG_TAG, "printerObserverCallback " + state);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            switch (state) {
+                                case CommonEnum.CONNECT_STATE_SUCCESS:
+                                    Log.e(LOG_TAG, printerInterface.getConfigObject().toString() + " CONNECT_STATE_SUCCESS at " + new Date(System.currentTimeMillis()));
+                                    showToast(printerInterface.getConfigObject().toString() + getString(R.string.connected));
+                                    //rtPrinter.setPrinterInterface(printerInterface);
+                                    mPrinterDataDeviceMap.put(ip, rtPrinter);
+                                    break;
+                                case CommonEnum.CONNECT_STATE_INTERRUPTED:
+                                    if (printerInterface != null && printerInterface.getConfigObject() != null) {
+                                        Log.e(LOG_TAG, printerInterface.getConfigObject().toString() + " CONNECT_STATE_INTERRUPTED at " + new Date(System.currentTimeMillis()));
+                                        showToast(printerInterface.getConfigObject().toString() + getString(R.string.disconnected));
+                                    } else {
+                                        Log.e(LOG_TAG, "CONNECT_STATE_INTERRUPTED ");
+                                        showToast(getString(R.string.disconnected));
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void printerReadMsgCallback(PrinterInterface printerInterface, byte[] bytes) {
+                    Log.d(LOG_TAG, "printerReadMsgCallback ");
+                }
+            });
+
+            // Connect
+            connectRTPrinter(ip, port, rtPrinter);
+}
 
 ```
 
 
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getTextCmd(textSetting, dishName));
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getTextCmd(textSetting, dateTimeStr));
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getTextCmd(textSetting, tableNumber));
 
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getLFCRCmd());
-            escCmd.append(escCmd.getLFCRCmd());
-            //escCmd.append(escCmd.getHeaderCmd());//初始化, Initial
-            escCmd.append(escCmd.getLFCRCmd());
 
-            escCmd.append(escCmd.getAllCutCmd());
-            
+
+```java
+    private void connectRTPrinter(String ip, int port, RTPrinter rtPrinter) {
+
+        WiFiConfigBean wiFiConfigBean = new WiFiConfigBean(ip, port);
+
+        PIFactory piFactory = new WiFiFactory();
+        PrinterInterface printerInterface = piFactory.create();
+        printerInterface.setConfigObject(wiFiConfigBean);
+        rtPrinter.setPrinterInterface(printerInterface);
+        try {
+            rtPrinter.connect(wiFiConfigBean);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
+        } finally {
+            Log.d(LOG_TAG, "connectRTPrinter" + ip + " Connected");
+        }
+
+    }
+
 ```
+
 
 
 ## 2 打印机连接重复
@@ -151,7 +205,7 @@
 
 ```
 
-## 2 打印机断连以后如何重连（因为我们不知道在什么情况下会断连，所以想跟你讨论下重连的问题）
+## 3 打印机断连以后如何重连（因为我们不知道在什么情况下会断连，所以想跟你讨论下重连的问题）
 
 ```
 PrinterObserverManager.getInstance().add(new PrinterObserver() {
@@ -165,12 +219,37 @@ PrinterObserverManager.getInstance().add(new PrinterObserver() {
 
 
 
-## 3 这些调试中的打印每秒钟都打很多次，而且有时候有有时候没有。能不能问一下是什么时候才会出现？能不能去掉SDK中的调试中的打印 （很影响看log中的其他更重要的信息）
+
+
+## 4 有没有一个基本的打印的小票的模板？
+
+我们这样一点一点调出来的模板很难看，你们客户或者你们开发过程中有没有一个基本的小票的打印？ 这样我只要换一下内容就行。
 
 ```
-2019-03-28 20:09:21.316 15379-15821/com.ristoo I/System.out: waitting for instream
-2019-03-28 20:09:21.411 15379-15801/com.ristoo I/System.out: waitting for instream
-2019-03-28 20:09:21.412 15379-15809/com.ristoo I/System.out: waitting for instream
-2019-03-28 20:09:21.412 15379-15842/com.ristoo I/System.out: waitting for instream
-2019-03-28 20:09:21.412 15379-15833/com.ristoo I/System.out: waitting for instream
+
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getTextCmd(textSetting, dishName));
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getTextCmd(textSetting, dateTimeStr));
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getTextCmd(textSetting, tableNumber));
+
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            escCmd.append(escCmd.getLFCRCmd());
+            //escCmd.append(escCmd.getHeaderCmd());//初始化, Initial
+            escCmd.append(escCmd.getLFCRCmd());
+
+            escCmd.append(escCmd.getAllCutCmd());
+            
 ```
+
+## 
