@@ -41,7 +41,6 @@ import com.rt.printerlibrary.bean.UsbConfigBean;
 import com.rt.printerlibrary.bean.WiFiConfigBean;
 import com.rt.printerlibrary.cmd.Cmd;
 import com.rt.printerlibrary.cmd.CpclFactory;
-import com.rt.printerlibrary.cmd.EscCmd;
 import com.rt.printerlibrary.cmd.EscFactory;
 import com.rt.printerlibrary.cmd.PinFactory;
 import com.rt.printerlibrary.cmd.TscFactory;
@@ -66,8 +65,7 @@ import com.rt.printerlibrary.utils.FuncUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener, PrinterObserver {
@@ -731,8 +729,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                         break;
                     case CommonEnum.CONNECT_STATE_INTERRUPTED:
                         if (printerInterface != null && printerInterface.getConfigObject() != null) {
+                            Log.e("CONNECT_ATE_INTERRUPTED", "initPrinterReceipt" + printerInterface.getConfigObject().toString() + " CONNECT_STATE_INTERRUPTED at " + new Date(System.currentTimeMillis()));
                             showToast(printerInterface.getConfigObject().toString() + getString(R.string._main_disconnect));
                         } else {
+                            Log.e("CONNECT_ATE_INTERRUPTED", "initPrinterReceipt  CONNECT_STATE_INTERRUPTED ");
                             showToast(getString(R.string._main_disconnect));
                         }
                         tv_device_selected.setText(R.string.please_connect);
